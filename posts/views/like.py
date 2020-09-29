@@ -9,6 +9,7 @@ from posts.serializers import LikeSerializer
 from posts.models import Post, Like
 
 
+# /posts/like
 class LikeView(APIView):
     permission_classes = (IsAuthenticated, )
 
@@ -19,6 +20,7 @@ class LikeView(APIView):
             if created:
                 like.save()
             serializer = LikeSerializer(like)
+            request.user.update_last_action()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         except ObjectDoesNotExist:
             return Response(status=status.HTTP_400_BAD_REQUEST)
@@ -27,6 +29,7 @@ class LikeView(APIView):
     def delete(self, request, **kwargs):
         post = Post.objects.get(id=kwargs['post'])
         Like.objects.get(user=request.user, post=post).delete()
+        request.user.update_last_action()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 

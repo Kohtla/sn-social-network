@@ -1,10 +1,15 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models, transaction
 
+from datetime import datetime
+
 
 class User(AbstractUser):
     last_action = models.DateTimeField(verbose_name='Last action datetime', null=True, blank=True)
 
+    def update_last_action(self):
+        self.last_action = datetime.now()
+        self.save()
 
 class UserManager(models.Manager):
     def _create_user(self, username, password, **extra_fields):
