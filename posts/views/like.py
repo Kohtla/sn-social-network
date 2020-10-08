@@ -16,9 +16,7 @@ class LikeView(APIView):
     def post(self, request, **kwargs):
         try:
             post = Post.objects.get(id=kwargs['post'])
-            like, created = Like.objects.get_or_create(post=post, user=request.user)
-            if created:
-                like.save()
+            like, created = Like.objects.get_or_create(post=post, user=request.user)            
             serializer = LikeSerializer(like)
             request.user.update_last_action()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
